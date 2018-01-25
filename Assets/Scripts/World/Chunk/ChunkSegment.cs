@@ -6,7 +6,7 @@ namespace Assets.Scripts.World.Chunk
 {
     public class ChunkSegment
     {
-        private readonly ChunkCoordinates coordinates;
+        public readonly ChunkCoordinates coordinates;
         private readonly ChunkInstance chunkInstance;
         private readonly Chunk chunk;
         private Voxel[] voxels;
@@ -18,6 +18,10 @@ namespace Assets.Scripts.World.Chunk
 
         public void SetData(Voxel[] voxels) {
             this.voxels = voxels;
+        }
+
+        public void GenerateMesh() {
+            chunkInstance.meshFilter.mesh = MarchingCubes.March(voxels, new Vector3Int(16, 16, 16));
         }
 
         //public ChunkSegment(int x, int y, int z, Chunk chunk, Space space = Space.World) {

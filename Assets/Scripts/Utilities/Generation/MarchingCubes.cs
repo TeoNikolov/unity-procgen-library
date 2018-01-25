@@ -297,7 +297,7 @@ public class MarchingCubes {
         {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1}
     };
 
-    public static Mesh March(Vector3Int dimensions, Voxel[] data) {
+    public static Mesh March(Voxel[] data, Vector3Int dimensions) {
         Vector3[] vertices = new Vector3[dimensions.x * dimensions.y * dimensions.z * 3 * 5];
         List<int> triangles = new List<int>();
         Vector3[] normals = new Vector3[dimensions.x * dimensions.y * dimensions.z * 3 * 5];

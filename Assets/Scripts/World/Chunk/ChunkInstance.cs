@@ -7,6 +7,11 @@ namespace Assets.Scripts.World.Chunk
     public class ChunkInstance : MonoBehaviour
     {
         public MeshFilter meshFilter;
+        private ChunkSegment chunkSegment;
+
+        public void SetChunkSegment(ChunkSegment chunkSegment) {
+            this.chunkSegment = chunkSegment;
+        }
 
         // Use this for initialization
         void Start()
