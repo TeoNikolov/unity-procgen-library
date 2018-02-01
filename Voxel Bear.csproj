@@ -307,6 +307,7 @@
     <Compile Include="Assets\Scripts\PlayerController.cs" />
     <Compile Include="Assets\Scripts\Utilities\Generation\MarchingCubes.cs" />
     <Compile Include="Assets\Scripts\Utilities\Generation\MeshData.cs" />
+    <Compile Include="Assets\Scripts\Utilities\Generation\Noise\NoiseGenerator.cs" />
     <Compile Include="Assets\Scripts\Utilities\Tasks\Task.cs" />
     <Compile Include="Assets\Scripts\Utilities\Tasks\TaskFactory.cs" />
     <Compile Include="Assets\Scripts\World\Chunk\Chunk.cs" />

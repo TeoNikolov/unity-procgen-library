@@ -4,16 +4,23 @@ using UnityEngine;
 
 namespace Assets.Scripts.World.Chunk
 {
-    public class ChunkSegment
-    {
+    public class ChunkSegment {
         public readonly ChunkCoordinates coordinates;
-        private readonly ChunkInstance chunkInstance;
+        private ChunkInstance chunkInstance;
         private readonly Chunk chunk;
         private Voxel[] voxels;
 
         public ChunkSegment(Chunk chunk, ChunkCoordinates coordinates) {
             this.coordinates = coordinates;
             this.chunk = chunk;
+        }
+
+        /// <returns></returns>
+        public void CreateChunkInstance(GameObject prefab) {
+            if (chunkInstance == null) {
+                chunkInstance = GameObject.Instantiate(prefab, coordinates.GetXYZ(CoordinateSpace.World),
+                    new Quaternion(0, 0, 0, 1)).GetComponent<ChunkInstance>();
+            }
         }
 
         public void SetData(Voxel[] voxels) {
@@ -24,18 +31,9 @@ namespace Assets.Scripts.World.Chunk
             chunkInstance.meshFilter.mesh = MarchingCubes.March(voxels, new Vector3Int(16, 16, 16));
         }
 
-        //public ChunkSegment(int x, int y, int z, Chunk chunk, Space space = Space.World) {
-        //    this.coordinates = new ChunkCoordinates(x, y, z, space);
-        //    this.chunk = chunk;
-        //}
-
-        //public void Instantiate() {
-        //    GameObject.Instantiate(new GameObject(), coordinates.GetXYZ);
-        //}
-
         public ulong GetHashcode()
         {
-            return (ulong)(coordinates.GetX(Space.World) + coordinates.GetZ(Space.World) << 32);
+            return (ulong)(coordinates.GetX(CoordinateSpace.World) + coordinates.GetZ(CoordinateSpace.World) << 32);
         }
     }
 }

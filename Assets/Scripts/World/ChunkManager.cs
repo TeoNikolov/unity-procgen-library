@@ -11,14 +11,19 @@ public class ChunkManager : MonoBehaviour {
     //DEBUG
     public MeshFilter meshFilter;
     private List<ChunkInstance> chunkInstanceList;
+    private NoiseGenerator noiseGen;
 
     // Use this for initialization
     void Start() {
+        noiseGen = new NoiseGenerator(60f);
+
         chunkInstanceList = new List<ChunkInstance>();
         
         for (int x = 0; x < 8; x++) {
             for (int z = 0; z < 8; z++) {
-                Chunk chunk = new Chunk(new Vector2Int(x, z));
+                Chunk chunk = new Chunk(new Vector2Int(x, z), CoordinateSpace.Chunk);
+                chunk.CreateInstances(chunkPrefab);
+                chunk.GenerateTerrainAndMarch(noiseGen);
             }
         }
 

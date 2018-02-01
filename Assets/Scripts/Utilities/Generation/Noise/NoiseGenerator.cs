@@ -16,12 +16,13 @@ public class NoiseGenerator {
         }
 
         this.scale = scale;
-        this.origin = new Vector2(this.RNG.Next(), this.RNG.Next());
+        this.origin = new Vector2(this.RNG.Next(-100000, 100000), this.RNG.Next());
+        this.origin = new Vector2(50, 50);
     }
 
     public float Generate(float x, float y) {
-        float sampleX = origin.x + x / this.scale;
-        float sampleY = origin.y + y / this.scale;
+        float sampleX = (origin.x + x) / this.scale;
+        float sampleY = (origin.y + y) / this.scale;
         return Mathf.PerlinNoise(sampleX, sampleY);
     }
 

@@ -3,14 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class CameraFollow : MonoBehaviour {
+    public Transform followedObject;
 
-	// Use this for initialization
-	void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+    private void LateUpdate() {
+        transform.position = followedObject.position;
+        transform.rotation = followedObject.rotation;
+    }
 }
