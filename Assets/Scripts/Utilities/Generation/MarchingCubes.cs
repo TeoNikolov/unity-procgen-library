@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Assets.Scripts.World;
@@ -297,7 +298,7 @@ public class MarchingCubes {
         {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1}
     };
 
-    public static Mesh March(Voxel[] data, Vector3Int dimensions) {
+    public static MeshData March(Voxel[] data, Vector3Int dimensions) {
         Vector3[] vertices = new Vector3[dimensions.x * dimensions.y * dimensions.z * 3 * 5];
         List<int> triangles = new List<int>();
         Vector3[] normals = new Vector3[dimensions.x * dimensions.y * dimensions.z * 3 * 5];
@@ -339,11 +340,16 @@ public class MarchingCubes {
             }
         }
 
-        Mesh mesh = new Mesh();
-        mesh.Clear();
-        mesh.vertices = vertices;
-        mesh.normals = normals;
-        mesh.triangles = triangles.ToArray();
-        return mesh;
+        Vector3[] newVertices = new Vector3[v];
+        Vector3[] newNormals = new Vector3[v];
+        Array.Copy(vertices, newVertices, v);
+        Array.Copy(normals, newNormals, v);
+
+        MeshData meshData = new MeshData();
+        meshData.Vertices = newVertices;
+        meshData.Triangles = triangles;
+        meshData.Normals = newNormals;
+
+        return meshData;
     }
 }

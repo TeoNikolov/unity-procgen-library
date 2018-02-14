@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour {
-    public Transform transform;
     public float movementSpeed;
     public float turboMovementSpeed;
     public float mouseSensitivity;
@@ -66,9 +65,11 @@ public class PlayerController : MonoBehaviour {
             }
         }
 
-        xRotation += mouseSensitivity * Input.GetAxis("Mouse X");
-        yRotation -= mouseSensitivity * Input.GetAxis("Mouse Y");
-        yRotation = Mathf.Clamp(yRotation, -90, 90);
-        transform.rotation = Quaternion.Euler(yRotation, xRotation, 0);
+        //if (Input.GetButton("Fire1")) {
+            xRotation += mouseSensitivity * Input.GetAxis("Mouse X");
+            yRotation -= mouseSensitivity * Input.GetAxis("Mouse Y");
+            yRotation = Mathf.Clamp(yRotation, -90, 90);
+            transform.rotation = Quaternion.Euler(yRotation, xRotation, 0);
+        //}
     }
 }

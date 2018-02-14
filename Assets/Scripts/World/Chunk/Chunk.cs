@@ -9,7 +9,7 @@ namespace Assets.Scripts.World.Chunk
         /// <summary>
         /// The number of chunk segments a chunk has vertically.
         /// </summary>
-        public static readonly int height = 8;
+        public static readonly int height = 16;
         private List<ChunkSegment> chunkSegments;
         private readonly int x;
         private readonly int z;
@@ -37,6 +37,12 @@ namespace Assets.Scripts.World.Chunk
         public void CreateInstances(GameObject prefab) {
             for (int i = 0; i < chunkSegments.Count; i++) {
                 chunkSegments[i].CreateChunkInstance(prefab);
+            }
+        }
+
+        public void UpdateChunkMesh() {
+            foreach (ChunkSegment segment in chunkSegments) {
+                segment.ApplyMesh();
             }
         }
 

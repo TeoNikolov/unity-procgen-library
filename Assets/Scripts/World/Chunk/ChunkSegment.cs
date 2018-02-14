@@ -9,6 +9,7 @@ namespace Assets.Scripts.World.Chunk
         private ChunkInstance chunkInstance;
         private readonly Chunk chunk;
         private Voxel[] voxels;
+        private MeshData meshData;
 
         public ChunkSegment(Chunk chunk, ChunkCoordinates coordinates) {
             this.coordinates = coordinates;
@@ -28,7 +29,16 @@ namespace Assets.Scripts.World.Chunk
         }
 
         public void GenerateMesh() {
-            chunkInstance.meshFilter.mesh = MarchingCubes.March(voxels, new Vector3Int(16, 16, 16));
+            this.meshData = MarchingCubes.March(voxels, new Vector3Int(16, 16, 16));
+        }
+
+        public void ApplyMesh() {
+            Mesh mesh = new Mesh();
+            mesh.Clear();
+            mesh.vertices = this.meshData.Vertices;
+            mesh.normals = this.meshData.Normals;
+            mesh.triangles = this.meshData.Triangles.ToArray();
+            chunkInstance.meshFilter.mesh = mesh;
         }
 
         public ulong GetHashcode()
