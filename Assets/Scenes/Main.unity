@@ -14,10 +14,10 @@ OcclusionCullingSettings:
 RenderSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 8
-  m_Fog: 1
+  m_Fog: 0
   m_FogColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
   m_FogMode: 3
-  m_FogDensity: 0.02
+  m_FogDensity: 0.005
   m_LinearFogStart: 40
   m_LinearFogEnd: 300
   m_AmbientSkyColor: {r: 0.212, g: 0.227, b: 0.259, a: 1}
@@ -142,7 +142,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   chunkPrefab: {fileID: 1640252354357988, guid: d5ce1a7e0e9679c459cd9a659b7c4f25,
     type: 2}
-  meshFilter: {fileID: 0}
+  origin: {fileID: 1136071192}
+  playerController: {fileID: 1136071191}
 --- !u!4 &977363033
 Transform:
   m_ObjectHideFlags: 0
@@ -183,22 +184,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2a71e5a0b2ea7c441867ec37bfd25e00, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  movementSpeed: 20
-  turboMovementSpeed: 60
-  mouseSensitivity: 20
+  viewDistanceNear: 4
+  viewDistanceFar: 6
+  viewDistanceFurthest: 10
+  movementSpeed: 40
+  turboMovementSpeed: 100
+  mouseSensitivity: 10
 --- !u!4 &1136071192
 Transform:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1136071190}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalRotation: {x: 0.27412733, y: -0.100479126, z: 0.028811919, w: 0.95599586}
+  m_LocalPosition: {x: 0, y: 320, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 3
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 32, y: -12, z: 0}
 --- !u!1 &1483184009
 GameObject:
   m_ObjectHideFlags: 0
@@ -225,7 +229,7 @@ Light:
   serializedVersion: 8
   m_Type: 1
   m_Color: {r: 1, g: 0.95686275, b: 0.8392157, a: 1}
-  m_Intensity: 1
+  m_Intensity: 0.6
   m_Range: 10
   m_SpotAngle: 30
   m_CookieSize: 10

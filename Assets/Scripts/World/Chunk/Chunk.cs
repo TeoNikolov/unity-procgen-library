@@ -9,26 +9,28 @@ namespace Assets.Scripts.World.Chunk
         /// <summary>
         /// The number of chunk segments a chunk has vertically.
         /// </summary>
-        public static readonly int height = 16;
+        public static readonly int height = 4;
+        public static Dictionary<ulong, Chunk> chunks;
+        public readonly ChunkCoordinates2D coordinates;
+
+        [HideInInspector]
+        public bool isGenerated = false;
         private List<ChunkSegment> chunkSegments;
-        private readonly int x;
-        private readonly int z;
 
-        public Chunk(Vector2Int xz, CoordinateSpace space = CoordinateSpace.World) : this(xz.x, xz.y, space) { }
+        public Chunk(Vector2Int xz, CoordinateSpace space) : this(xz.x, xz.y, space) { }
 
-        public Chunk(int x, int z, CoordinateSpace space = CoordinateSpace.World) {
+        public Chunk(int x, int z, CoordinateSpace space) {
             if (space == CoordinateSpace.World) {
                 x >>= 4;
                 z >>= 4;
             }
 
-            this.x = x;
-            this.z = z;
-
             chunkSegments = new List<ChunkSegment>(height);
+            coordinates = new ChunkCoordinates2D(x, z, CoordinateSpace.Chunk);
+            chunks.Add(GetChunkHashCode(), this);
 
             for (int y = 0; y < height; y++) {
-                ChunkCoordinates coordinates = new ChunkCoordinates(x, y, z, CoordinateSpace.Chunk);
+                ChunkCoordinates3D coordinates = new ChunkCoordinates3D(x, y, z, CoordinateSpace.Chunk);
                 ChunkSegment segment = new ChunkSegment(this, coordinates);
                 chunkSegments.Add(segment);
             }
@@ -73,6 +75,8 @@ namespace Assets.Scripts.World.Chunk
                 segment.SetData(voxels);
                 segment.GenerateMesh();
             }
+
+            isGenerated = true;
         }
 
         private float[] GenerateHeightmap(NoiseGenerator noiseGen) {
@@ -80,11 +84,52 @@ namespace Assets.Scripts.World.Chunk
 
             for (int y = 0; y < 17; y++) {
                 for (int x = 0; x < 17; x++) {
-                    heightmap[x + y * 17] = noiseGen.Generate(x + this.x * 16, y + this.z * 16) * 16 * height + 1;
+                    heightmap[x + y * 17] = noiseGen.Generate(x + coordinates.GetX(CoordinateSpace.World),
+                        y + coordinates.GetZ(CoordinateSpace.World)) * 16 * height + 1;
                 }
             }
 
             return heightmap;
+        }
+
+        /// <summary>
+        /// If the chunk exists, returns a reference to the chunk at the provided cooridnates and null otherwise.
+        /// </summary>
+        /// <param name="x">The X coordinate for the chunk.</param>
+        /// <param name="z">The Z coordinate for the chunk.</param>
+        /// <param name="space">The space in which the X and Z coordinates are.</param>
+        /// <returns>The existing chunk at the specific coordinates.</returns>
+        public static Chunk GetChunk(int x, int z, CoordinateSpace space) {
+            if (space == CoordinateSpace.Chunk) {
+                x = ChunkCoordinates2D.ConvertSpace(x, CoordinateSpace.Chunk);
+                z = ChunkCoordinates2D.ConvertSpace(z, CoordinateSpace.Chunk);
+            }
+
+            Chunk chunk;
+            chunks.TryGetValue((ulong)x + ((ulong)z << 32), out chunk);
+
+            if (chunk == null) {
+                chunk = new Chunk(x, z, CoordinateSpace.World);
+            }
+
+            return chunk;
+        }
+
+        /// <summary>
+        /// Calculate the hash of the chunk based on its XZ coordinates.
+        /// </summary>
+        /// <returns>An unsigned long with the first 32 most significant bits being the Z world coordinate and the other 32 the X world coordinate.</returns>
+        public ulong GetChunkHashCode() {
+            return (ulong)coordinates.GetX(CoordinateSpace.World) + ((ulong)coordinates.GetZ(CoordinateSpace.World) << 32);
+        }
+
+        public void Destroy() {
+            for (int i = 0; i < chunkSegments.Count; i++) {
+                chunkSegments[i].Destroy();
+            }
+
+            this.chunkSegments.Clear();
+            chunks.Remove(GetChunkHashCode());
         }
     }
 }

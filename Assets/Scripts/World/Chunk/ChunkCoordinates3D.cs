@@ -10,15 +10,15 @@ namespace Assets.Scripts.World.Chunk
         World
     }
 
-    public class ChunkCoordinates
+    public class ChunkCoordinates3D
     {
         private readonly int x;
         private readonly int y;
         private readonly int z;
 
-        public ChunkCoordinates(Vector3Int xyz, CoordinateSpace space = CoordinateSpace.World) : this(xyz.x, xyz.y, xyz.z, space) { }
+        public ChunkCoordinates3D(Vector3Int xyz, CoordinateSpace space = CoordinateSpace.World) : this(xyz.x, xyz.y, xyz.z, space) { }
 
-        public ChunkCoordinates(int x, int y, int z, CoordinateSpace space = CoordinateSpace.World)
+        public ChunkCoordinates3D(int x, int y, int z, CoordinateSpace space = CoordinateSpace.World)
         {
             if (space == CoordinateSpace.World) {
                 this.x = x >> 4;

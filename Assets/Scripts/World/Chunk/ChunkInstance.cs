@@ -19,5 +19,9 @@ namespace Assets.Scripts.World.Chunk
         {
 
         }
+
+        public void DestroyInstance() {
+            Destroy(gameObject);
+        }
     }
 }

@@ -5,13 +5,13 @@ using UnityEngine;
 namespace Assets.Scripts.World.Chunk
 {
     public class ChunkSegment {
-        public readonly ChunkCoordinates coordinates;
-        private ChunkInstance chunkInstance;
+        public readonly ChunkCoordinates3D coordinates;
         private readonly Chunk chunk;
+        private ChunkInstance chunkInstance;
         private Voxel[] voxels;
         private MeshData meshData;
 
-        public ChunkSegment(Chunk chunk, ChunkCoordinates coordinates) {
+        public ChunkSegment(Chunk chunk, ChunkCoordinates3D coordinates) {
             this.coordinates = coordinates;
             this.chunk = chunk;
         }
@@ -41,9 +41,8 @@ namespace Assets.Scripts.World.Chunk
             chunkInstance.meshFilter.mesh = mesh;
         }
 
-        public ulong GetHashcode()
-        {
-            return (ulong)(coordinates.GetX(CoordinateSpace.World) + coordinates.GetZ(CoordinateSpace.World) << 32);
+        public void Destroy() {
+            this.chunkInstance.DestroyInstance();
         }
     }
 }
