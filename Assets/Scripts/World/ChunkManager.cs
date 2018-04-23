@@ -27,7 +27,7 @@ public class ChunkManager : MonoBehaviour {
     private List<Chunk> chunksGenerated;
     private List<Chunk> chunksToRemove;
     private List<Task<Chunk>> tasks;
-    private byte maxGenTasks = 1;
+    private byte maxGenTasks = 2;
 
     // Use this for initialization
     void Start() {
@@ -40,14 +40,7 @@ public class ChunkManager : MonoBehaviour {
         chunksToRemove = new List<Chunk>();
         tasks = new List<Task<Chunk>>(maxGenTasks);
         noiseGen = new NoiseGenerator(60f);
-        
-        //for (int x = 0; x < 12; x++) {
-        //    for (int z = 0; z < 12; z++) {
-        //        Chunk chunk = new Chunk(new Vector2Int(x, z), CoordinateSpace.Chunk);
-        //        chunk.CreateInstances(chunkPrefab);
-        //        chunksToGenerate.Add(chunk);
-        //    }
-        //}
+        playerController.OnChunkBorderCrossed += new OnChunkBorderCrossedHandler(UpdateChunkGeneration);
     }
 	
     private void UpdateTasks() {
@@ -57,7 +50,7 @@ public class ChunkManager : MonoBehaviour {
             if (task.IsCompleted) {
                 chunksBeingGenerated.Remove(task.Result);
                 chunksGenerated.Add(task.Result);
-                tasks[i].Result.UpdateChunkMesh();
+                task.Result.UpdateChunkMesh();
                 tasks.RemoveAt(i);
             }
         }
@@ -92,6 +85,13 @@ public class ChunkManager : MonoBehaviour {
             double d2 = Distance(sortOrigin, new Tuple<int, int>(c2X, c2Z));
             return d1.CompareTo(d2);
         });
+
+        //Debug.Log("To G: " + chunksToGenerate.Count +
+        //    " | Being G:" + chunksBeingGenerated.Count +
+        //    " | G:" + chunksGenerated.Count +
+        //    " | To R: " + chunksToRemove.Count +
+        //    " | Total: " + (chunksToGenerate.Count + chunksBeingGenerated.Count + chunksGenerated.Count + chunksToRemove.Count) + 
+        //    " | HASHMAP TOTAL: " + Chunk.chunks.Count);
     }
 
     private void OffsetCoordinateMap(int offset_x, int offset_z) {
@@ -100,9 +100,10 @@ public class ChunkManager : MonoBehaviour {
             int z = t.Item2 + offset_z;
             Chunk chunk = Chunk.GetChunk(x, z, CoordinateSpace.Chunk);
 
-            if (!chunk.isGenerated) {
+            if (!chunk.isGenerated && !chunk.isBeingGenerated) {
                 chunk.CreateInstances(chunkPrefab);
                 chunksToGenerate.Add(chunk);
+                chunk.isBeingGenerated = true;
             }
         }
     }
@@ -111,7 +112,7 @@ public class ChunkManager : MonoBehaviour {
     /// Specifies how often the generation of chunks should be updated.
     /// Includes: Calculating new chunks to generate, queueing them and sorting them according to current player location.
     /// </summary>
-    private const double chunkGenUpdateConstant = 0.25f;
+    private const double chunkGenUpdateConstant = 0.1f;
 
     /// <summary>
     /// The current timer used for chunk generation updates.
@@ -134,6 +135,7 @@ public class ChunkManager : MonoBehaviour {
     private const int chunkRemoveCount = 4;
 
     private void UpdateChunkGeneration() {
+        Debug.Log("UPDATING CHUNK GENERATION");
         int origin_x = (int)origin.position.x >> 4;
         int origin_z = (int)origin.position.z >> 4;
         OffsetCoordinateMap(origin_x, origin_z);
@@ -210,7 +212,7 @@ public class ChunkManager : MonoBehaviour {
     private void UpdateChunks() {
         if (chunkGenUpdateTimer >= chunkGenUpdateConstant) {
             chunkGenUpdateTimer -= 0.25;
-            UpdateChunkGeneration();
+            //UpdateChunkGeneration();
         }
 
         if (chunkRemoveTimer >= chunkRemoveConstant) {
@@ -263,16 +265,22 @@ public class ChunkManager : MonoBehaviour {
     }
 
     /// <summary>
-    /// Evaluate the distance between two arbitary points.
+    /// Calculate the distance between two arbitary points.
     /// </summary>
-    /// <param name="p1">The first point.</param>
-    /// <param name="p2">The second point.</param>
+    /// <param name="p1">Tuple containing the origin point's X and Y coordinates.</param>
+    /// <param name="p2">Tuple containing the compared-against point's X and Y coordinates.</param>
     /// <returns>The distance between the two points.</returns>
-    private static double Distance(Tuple<int, int> p1, Tuple<int, int> p2) {
+    private static double DistanceSqrt(Tuple<int, int> p1, Tuple<int, int> p2) {
         return Math.Sqrt(Math.Pow(p2.Item1 - p1.Item1, 2) + Math.Pow(p2.Item2 - p1.Item2, 2));
     }
 
-
-
-
+    /// <summary>
+    /// Calculate the squared distance between two arbitary points. Faster to calculate than getting the actual distance as with DistanceSqrt().
+    /// </summary>
+    /// <param name="p1">Tuple containing the origin point's X and Y coordinates.</param>
+    /// <param name="p2">Tuple containing the compared-against point's X and Y coordinates.</param>
+    /// <returns>The squared distance between the two points.</returns>
+    private static double Distance(Tuple<int, int> p1, Tuple<int, int> p2) {
+        return Math.Pow(p2.Item1 - p1.Item1, 2) + Math.Pow(p2.Item2 - p1.Item2, 2);
+    }
 }

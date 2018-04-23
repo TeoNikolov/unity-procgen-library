@@ -184,11 +184,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2a71e5a0b2ea7c441867ec37bfd25e00, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  viewDistanceNear: 4
-  viewDistanceFar: 6
+  viewDistanceNear: 8
+  viewDistanceFar: 8
   viewDistanceFurthest: 10
   movementSpeed: 40
-  turboMovementSpeed: 100
+  turboMovementSpeed: 300
   mouseSensitivity: 10
 --- !u!4 &1136071192
 Transform:

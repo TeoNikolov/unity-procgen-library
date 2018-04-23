@@ -15,6 +15,8 @@ namespace Assets.Scripts.World.Chunk
 
         [HideInInspector]
         public bool isGenerated = false;
+        [HideInInspector]
+        public bool isBeingGenerated = false;
         private List<ChunkSegment> chunkSegments;
 
         public Chunk(Vector2Int xz, CoordinateSpace space) : this(xz.x, xz.y, space) { }
@@ -77,6 +79,7 @@ namespace Assets.Scripts.World.Chunk
             }
 
             isGenerated = true;
+            isBeingGenerated = false;
         }
 
         private float[] GenerateHeightmap(NoiseGenerator noiseGen) {
