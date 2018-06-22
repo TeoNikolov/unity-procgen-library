@@ -16,10 +16,15 @@ namespace Assets.Scripts.World.Chunk
             this.chunk = chunk;
         }
 
-        /// <returns></returns>
+        /// <summary>
+        /// Instantiates a Chunk game object within Unity at this chunk segment's coordinates.
+        /// The methos links the resulting ChunkInstance script with this instance of the chunk segment.
+        /// </summary>
+        /// <param name="prefab">The Chunk prefab to instantiate</param>
         public void CreateChunkInstance(GameObject prefab) {
-            if (chunkInstance == null) {
-                chunkInstance = GameObject.Instantiate(prefab, coordinates.GetXYZ(CoordinateSpace.World),
+            if (this.chunkInstance == null) {
+                this.chunkInstance = GameObject.Instantiate(prefab,
+                    this.coordinates.GetXYZ(CoordinateSpace.World),
                     new Quaternion(0, 0, 0, 1)).GetComponent<ChunkInstance>();
             }
         }
@@ -38,7 +43,7 @@ namespace Assets.Scripts.World.Chunk
             mesh.vertices = this.meshData.Vertices;
             mesh.normals = this.meshData.Normals;
             mesh.triangles = this.meshData.Triangles.ToArray();
-            chunkInstance.meshFilter.mesh = mesh;
+            this.chunkInstance.meshFilter.mesh = mesh;
         }
 
         public void Destroy() {

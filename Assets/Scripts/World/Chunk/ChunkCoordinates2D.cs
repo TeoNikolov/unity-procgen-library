@@ -4,6 +4,11 @@ using UnityEngine;
 
 namespace Assets.Scripts.World.Chunk
 {
+    public enum CoordinateSpace {
+        Chunk,
+        World
+    }
+
     public class ChunkCoordinates2D
     {
         private readonly int x;
@@ -11,8 +16,7 @@ namespace Assets.Scripts.World.Chunk
 
         public ChunkCoordinates2D(Vector2Int xz, CoordinateSpace space) : this(xz.x, xz.y, space) { }
 
-        public ChunkCoordinates2D(int x, int z, CoordinateSpace space)
-        {
+        public ChunkCoordinates2D(int x, int z, CoordinateSpace space) {
             if (space == CoordinateSpace.World) {
                 this.x = x >> 4;
                 this.z = z >> 4;

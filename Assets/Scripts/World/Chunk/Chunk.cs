@@ -10,13 +10,16 @@ namespace Assets.Scripts.World.Chunk
         /// The number of chunk segments a chunk has vertically.
         /// </summary>
         public static readonly int height = 4;
-        public static Dictionary<ulong, Chunk> chunks;
+        private static Dictionary<ulong, Chunk> chunks = new Dictionary<ulong, Chunk>();
         public readonly ChunkCoordinates2D coordinates;
+        public readonly ulong hashcode;
 
         [HideInInspector]
         public bool isGenerated = false;
         [HideInInspector]
         public bool isBeingGenerated = false;
+        [HideInInspector]
+        public bool isInstantiated = false;
         private List<ChunkSegment> chunkSegments;
 
         public Chunk(Vector2Int xz, CoordinateSpace space) : this(xz.x, xz.y, space) { }
@@ -26,22 +29,25 @@ namespace Assets.Scripts.World.Chunk
                 x >>= 4;
                 z >>= 4;
             }
-
             chunkSegments = new List<ChunkSegment>(height);
             coordinates = new ChunkCoordinates2D(x, z, CoordinateSpace.Chunk);
-            chunks.Add(GetChunkHashCode(), this);
+            hashcode = GetChunkHashCode();
+            chunks.Add(hashcode, this);
 
             for (int y = 0; y < height; y++) {
                 ChunkCoordinates3D coordinates = new ChunkCoordinates3D(x, y, z, CoordinateSpace.Chunk);
                 ChunkSegment segment = new ChunkSegment(this, coordinates);
                 chunkSegments.Add(segment);
             }
+
         }
 
         public void CreateInstances(GameObject prefab) {
             for (int i = 0; i < chunkSegments.Count; i++) {
                 chunkSegments[i].CreateChunkInstance(prefab);
             }
+
+            isInstantiated = true;
         }
 
         public void UpdateChunkMesh() {
@@ -50,8 +56,8 @@ namespace Assets.Scripts.World.Chunk
             }
         }
 
-        public void GenerateTerrainAndMarch(NoiseGenerator noiseGen) {
-            float[] heightmap = GenerateHeightmap(noiseGen);
+        public void GenerateTerrainAndMarch(NoiseGenerator noisegen) {
+            float[] heightmap = GenerateHeightmap(noisegen);
 
             foreach (ChunkSegment segment in chunkSegments) {
                 Voxel[] voxels = new Voxel[4096];
@@ -82,12 +88,13 @@ namespace Assets.Scripts.World.Chunk
             isBeingGenerated = false;
         }
 
-        private float[] GenerateHeightmap(NoiseGenerator noiseGen) {
+        private float[] GenerateHeightmap(NoiseGenerator noisegen) {
             float[] heightmap = new float[17 * 17];
 
             for (int y = 0; y < 17; y++) {
                 for (int x = 0; x < 17; x++) {
-                    heightmap[x + y * 17] = noiseGen.Generate(x + coordinates.GetX(CoordinateSpace.World),
+                    heightmap[x + y * 17] = noisegen.Generate(
+                        x + coordinates.GetX(CoordinateSpace.World),
                         y + coordinates.GetZ(CoordinateSpace.World)) * 16 * height + 1;
                 }
             }
@@ -109,13 +116,18 @@ namespace Assets.Scripts.World.Chunk
             }
 
             Chunk chunk;
-            chunks.TryGetValue((ulong)x + ((ulong)z << 32), out chunk);
+            chunks.TryGetValue(GetChunkHashCode(x, z, CoordinateSpace.World), out chunk);
 
             if (chunk == null) {
                 chunk = new Chunk(x, z, CoordinateSpace.World);
             }
 
             return chunk;
+        }
+
+        public static bool ChunkExists(ulong hashcode) {
+            Chunk chunk;
+            return chunks.TryGetValue(hashcode, out chunk);
         }
 
         /// <summary>
@@ -126,13 +138,29 @@ namespace Assets.Scripts.World.Chunk
             return (ulong)coordinates.GetX(CoordinateSpace.World) + ((ulong)coordinates.GetZ(CoordinateSpace.World) << 32);
         }
 
+        /// <summary>
+        /// Calculates the proper hashcode for a chunk with x and z coordinates in a certain space.
+        /// </summary>
+        /// <param name="x">The X coordinate</param>
+        /// <param name="z">The Z coordinate</param>
+        /// <param name="space">Which space the coordinates are in</param>
+        /// <returns>A long value to serve as the hashcode for the specific coordinate pair </returns>
+        public static ulong GetChunkHashCode(int x, int z, CoordinateSpace space) {
+            if (space == CoordinateSpace.Chunk) {
+                x = ChunkCoordinates2D.ConvertSpace(x, CoordinateSpace.Chunk);
+                z = ChunkCoordinates2D.ConvertSpace(z, CoordinateSpace.Chunk);
+            }
+
+            return (ulong)x + ((ulong)z << 32);
+        }
+
         public void Destroy() {
-            for (int i = 0; i < chunkSegments.Count; i++) {
-                chunkSegments[i].Destroy();
+            for (int i = 0; i < this.chunkSegments.Count; i++) {
+                this.chunkSegments[i].Destroy();
             }
 
             this.chunkSegments.Clear();
-            chunks.Remove(GetChunkHashCode());
+            chunks.Remove(this.hashcode);
         }
     }
 }

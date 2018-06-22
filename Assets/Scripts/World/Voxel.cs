@@ -21,9 +21,9 @@ namespace Assets.Scripts.World {
             }
 
             if (state) {
-                value |= (byte)(1 << corner);
+                this.value |= (byte)(1 << corner);
             } else {
-                value &= (byte)~(1 << corner);
+                this.value &= (byte)~(1 << corner);
             }
         }
 

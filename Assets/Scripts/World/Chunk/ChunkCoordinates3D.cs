@@ -4,12 +4,6 @@ using UnityEngine;
 
 namespace Assets.Scripts.World.Chunk
 {
-    public enum CoordinateSpace
-    {
-        Chunk,
-        World
-    }
-
     public class ChunkCoordinates3D
     {
         private readonly int x;

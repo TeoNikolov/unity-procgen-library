@@ -79,6 +79,12 @@ namespace Assets.Scripts.Utilities.PriorityQueue {
         bool IsEmpty();
 
         /// <summary>
+        /// Determine if the heap is empty.
+        /// </summary>
+        /// <returns></returns>
+        bool IsFull();
+
+        /// <summary>
         /// Returns the head of the queue, without removing it (use Dequeue() for that).
         /// </summary>
         TItem First { get; }

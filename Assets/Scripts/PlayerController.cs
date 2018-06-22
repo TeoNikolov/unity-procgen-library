@@ -8,19 +8,14 @@ public delegate void OnChunkBorderCrossedHandler();
 
 public class PlayerController : MonoBehaviour {
     /// <summary>
-    /// The minimum distance from the player for chunks to be loaded, measured in chunks.
+    /// The radius around the player below which chunks will be loaded, measured in chunks.
     /// </summary>
-    public int viewDistanceNear;
-
-    /// <summary>
-    /// The maximum distance from the player for chunks to be loaded, measured in chunks.
-    /// </summary>
-    public int viewDistanceFar;
+    public int viewDistanceMin;
 
     /// <summary>
     /// The distance from the player beyond which chunks should be unloaded, measured in chunks.
     /// </summary>
-    public int viewDistanceFurthest;
+    public int viewDistanceMax;
 
     public float movementSpeed;
     public float turboMovementSpeed;
@@ -31,6 +26,8 @@ public class PlayerController : MonoBehaviour {
 
     private int xOldChunk;
     private int zOldChunk;
+
+    private readonly static int borderCrossEventBorderCount = 2;
 
     private event OnChunkBorderCrossedHandler _onChunkBorderCrossed;
 
@@ -56,15 +53,13 @@ public class PlayerController : MonoBehaviour {
         int xChunk = ChunkCoordinates2D.ConvertSpace((int)transform.position.x, CoordinateSpace.World);
         int zChunk = ChunkCoordinates2D.ConvertSpace((int)transform.position.z, CoordinateSpace.World);
 
-        if (Math.Abs(xOldChunk - xChunk) > 4 || Math.Abs(zOldChunk - zChunk) > 4) {
+        if (Math.Abs(this.xOldChunk - xChunk) >= borderCrossEventBorderCount ||
+            Math.Abs(this.zOldChunk - zChunk) >= borderCrossEventBorderCount) {
             xOldChunk = xChunk;
             zOldChunk = zChunk;
             _onChunkBorderCrossed.Invoke();
         }
-    }
 
-    // Update is called once per frame
-    void FixedUpdate() {
         if (Input.GetKey(KeyCode.W)) {
             if (Input.GetKey(KeyCode.LeftShift)) {
                 transform.position += transform.forward * turboMovementSpeed * Time.deltaTime;

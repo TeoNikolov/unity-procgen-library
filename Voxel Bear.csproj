@@ -333,8 +333,8 @@
     <Compile Include="Assets\Scripts\World\Chunk\ChunkCoordinates2D.cs" />
     <Compile Include="Assets\Scripts\World\Chunk\ChunkCoordinates3D.cs" />
     <Compile Include="Assets\Scripts\World\Chunk\ChunkInstance.cs" />
+    <Compile Include="Assets\Scripts\World\Chunk\ChunkManager.cs" />
     <Compile Include="Assets\Scripts\World\Chunk\ChunkSegment.cs" />
-    <Compile Include="Assets\Scripts\World\ChunkManager.cs" />
     <Compile Include="Assets\Scripts\World\Voxel.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
